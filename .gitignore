@@ -3,5 +3,5 @@ settings.py
 .vscode/
 env/
 __pycache__/
-*.txt
+cities.txt
 test_calc.py
