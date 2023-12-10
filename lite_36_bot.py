@@ -4,6 +4,7 @@ import ephem # 24. Ипортируем модуль астрономии ephem(
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import date, datetime # 27. из модуля datetime импортируем класс date, чтобы получить сегодняшнюю дату для блока ephem. Импортируем класс datetime для рпеобразования даты из строки в блоке next_full_moon
 import re # 37. Импортируем модуль re для работы с регулярными выражениями (блок user_calculator)
+from random import randint # 40. для игры в числа импортируем функцию randint для генерации целых чисел (int)
 import settings # 3. импортируем данные из файла settings.py, создаем его для хранения персональных настроек бота (токен, прокси и др.), настройки хранятся в виде переменных, файл вносим в gitignore, чтобы не загружать на git hub
 from cities_play import cities # 34. импортируем данные из файла cities_play(список городов)
 # 1. импортируем коммуникатор - Updater
@@ -22,12 +23,22 @@ def talk_to_me(update, context): # 20. создаем функцию для ра
     logger.debug(text) # 22. выводим сообщение пользователя в консоль
     update.message.reply_text(text) # 23. Отвечаем пользователю
 
-def guess_number(update, context): # 39. создаем функци для игры в числа
+def play_random_numbers(user_number): # 41 создаем отдельно функцию, которая будет генерировать случайно число и сравнивать его с числом из функции guess_number
+    bot_number = randint(user_number - 10, user_number + 10) # randint принимает два аргумента, нижняя и верхняя граница генерируемых чисел, в данном случае отталкиваемся от числа пользователя
+    if user_number > bot_number: # прописываем логику игры
+        message = f'Ваше число {user_number}, мое {bot_number}, вы выиграли'
+    elif user_number == bot_number:
+        message = f'Ваше число {user_number}, мое {bot_number}, ничья'
+    else:
+        message = f'Ваше число {user_number}, мое {bot_number}, вы проиграли'
+    return message
+
+def guess_number(update, context): # 39. создаем функцию для игры в числа
     logger.debug(context.args)
     if context.args: # context.args это аргументы, которые следуют после комманды, в данном случае проверяем их наличие через if-конструкцию
         try: # обрабатываем исключение в том случае, если пользователь после команды ввел не число, а любое другое значение
             user_number = int(context.args[0]) # забираем первое значение которое ввел пользователь после команды и преобразуем его из строки в целое число
-            message = f'Ваше число {user_number}'
+            message = play_random_numbers(user_number) # 42. в переменную кладем результат выполнения функции с аргументом user_number
         except(TypeError, ValueError):
             message = 'Введите целое число'
     else:
