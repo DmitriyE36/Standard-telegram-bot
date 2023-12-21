@@ -18,3 +18,4 @@ structlog==23.2.0
 tornado==6.1
 tzdata==2023.3
 tzlocal==5.2
+emoji==2.9.0
